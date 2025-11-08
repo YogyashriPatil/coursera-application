@@ -5,12 +5,12 @@ const jwt = require("jsonwebtoken")
 const { adminModel, courseModel } = require("../db");
 const adminRouter = Router();
 const dotenv = require("dotenv")
-const { JWT_PASSWORD_ADMIN } = require("../config");
+// const { JWT_PASSWORD_ADMIN } = require("../config");
 const adminMiddleware = require("../middleware/adminMiddleware");
 
 dotenv.config();
 // adminRouter.use(adminMiddleware);
-
+JWT_PASSWORD_ADMIN = process.env.JWT_SECRET_ADMIN;
 adminRouter.post("/signup" , async (req,res) => {
     const email = req.body.email;
     const password = req.body.password;
@@ -53,9 +53,7 @@ adminRouter.post("/signin" , async (req,res) => {
     // const passwordMatch = bcrypt.compare(password, express.response.password);
 
     if(user) {
-        const token = jwt.sign({
-            id: user._id.toString
-        },JWT_PASSWORD_ADMIN)
+        const token = jwt.sign({id: user._id.toString()},JWT_PASSWORD_ADMIN);
 
         // do cookie logic for authentication
         res.json({
@@ -86,7 +84,7 @@ adminRouter.post("/course" , adminMiddleware, async function(req,res){
     })
 })
 
-adminRouter.put("/course" , adminMiddleware, async (req,res)=> {
+adminRouter.put("/course-edit" , adminMiddleware, async (req,res)=> {
     const adminId = req.userId;
     const {title, description, imageUrl, price, courseId} = req.body;
 
