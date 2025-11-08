@@ -2,12 +2,13 @@ const {Router} = require("express")
 const bcrypt = require("bcrypt")
 const zode = require("zod")
 const jwt = require("jsonwebtoken")
-const { adminModel } = require("../db");
+const { adminModel, courseModel } = require("../db");
 const adminRouter = Router();
 const dotenv = require("dotenv")
+const { JWT_PASSWORD_ADMIN } = require("../config");
+const adminMiddleware = require("../middleware/adminMiddleware");
 
 dotenv.config();
-const jwtPassword = process.env.JWT_SECRET_ADMIN;
 // adminRouter.use(adminMiddleware);
 
 adminRouter.post("/signup" , async (req,res) => {
@@ -54,7 +55,7 @@ adminRouter.post("/signin" , async (req,res) => {
     if(user) {
         const token = jwt.sign({
             id: user._id.toString
-        },jwtPassword)
+        },JWT_PASSWORD_ADMIN)
 
         // do cookie logic for authentication
         res.json({
@@ -68,10 +69,15 @@ adminRouter.post("/signin" , async (req,res) => {
     }
 })
 
-adminRouter.put("/course" , (req,res) => {
-    const {title,description,price} = req.body;  
+adminRouter.put("/course" , adminMiddleware, async (req,res) => {
+    const adminId = req.userId;
+    const {title, description, imageUrl, price} = req.body;
+    const course = await courseModel.create({
+        title, description,price, imageUrl, creatorId:adminId
+    })
     res.json({
-        message : "signip"
+        message : "course created",
+        courseId: course._id
     })
 })
 

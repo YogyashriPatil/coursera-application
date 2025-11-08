@@ -1,10 +1,10 @@
 const jwt = require("jsonwebtoken");
 
-const { JWT_PASSWORD_ADMIN } = require("../config")
+const { JWT_PASSWORD_USER } = require("../config")
 
-function adminMiddleware(req,res,next) {
+function userMiddleware(req,res,next) {
     const token = req.headers.token;
-    const decoded = jwt.verifytoken(token, JWT_PASSWORD_ADMIN);
+    const decoded = jwt.verifytoken(token, JWT_PASSWORD_USER);
 
     if(decoded) {
         req.userId= jwt.decode.id;
@@ -19,5 +19,5 @@ function adminMiddleware(req,res,next) {
 }
 
 module.exports = {
-    adminMiddleware : adminMiddleware
+    userMiddleware: userMiddleware
 }

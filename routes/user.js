@@ -6,9 +6,10 @@ const jwt = require("jsonwebtoken")
 const dotenv = require("dotenv")
 const { userModel } = require("../db")
 const userRouter = Router();
+const { JWT_PASSWORD_USER } = require("../config")
 
 dotenv.config();
-const jwtpassword = process.env.JWT_SECRET;
+// const jwtpassword = process.env.JWT_SECRET;
 
 userRouter.post("/signup" , async (req,res) => {
     const email = req.body.email;
@@ -58,7 +59,7 @@ userRouter.post("/signin" , async(req,res) => {
     if(user) {
         const token = jwt.sign({
             id: user._id.toString
-        },jwtpassword)
+        },JWT_PASSWORD_USER)
 
         // do cookie logic for authentication
         res.json({

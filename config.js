@@ -1,0 +1,2 @@
+JWT_SECRET_USER="patil"
+JWT_SECRET_ADMIN="yogyashri"
