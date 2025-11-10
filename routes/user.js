@@ -4,12 +4,13 @@
 const {Router} = require("express");
 const jwt = require("jsonwebtoken")
 const dotenv = require("dotenv")
-const { userModel } = require("../db")
+const { userModel, purchaseModel, courseModel } = require("../db")
 const userRouter = Router();
-const { JWT_PASSWORD_USER } = require("../config")
+const userMiddleware = require("../middleware/user")
+// const { JWT_PASSWORD_USER } = require("../config")
 
 dotenv.config();
-// const jwtpassword = process.env.JWT_SECRET;
+const JWT_PASSWORD_USER = process.env.JWT_SECRET;
 
 userRouter.post("/signup" , async (req,res) => {
     const email = req.body.email;
@@ -73,7 +74,20 @@ userRouter.post("/signin" , async(req,res) => {
     }
 })
 
-userRouter.get("/user/purchased-course" , (req,res) => {
+userRouter.get("/purchased" , userMiddleware, async (req,res) => {
+    const userId = req.userId;
+    // const courseId=req.body.courseId;
+    const purchases = await purchaseModel.create({
+        userId
+    })
+    const courseData = await courseModel.find({
+        _id: {$in : purchases.map(x => x.courseId) }
+    })
+    res.json({
+        message : "You have successfuly buy the course",
+        purchases,
+        courseData
+    })
 
 })
 

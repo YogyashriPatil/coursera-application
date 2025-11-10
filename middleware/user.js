@@ -1,13 +1,13 @@
 const jwt = require("jsonwebtoken");
 
-const { JWT_PASSWORD_USER } = require("../config")
+// const { JWT_PASSWORD_USER } = require("../config")
+const JWT_PASSWORD_USER = process.env.JWT_SECRET;
 
 function userMiddleware(req,res,next) {
     const token = req.headers.token;
-    const decoded = jwt.verifytoken(token, JWT_PASSWORD_USER);
-
+    const decoded = jwt.verify(token, JWT_PASSWORD_USER);
     if(decoded) {
-        req.userId= jwt.decode.id;
+        req.userId= decoded.id;
         next();
     }
     else
@@ -18,6 +18,4 @@ function userMiddleware(req,res,next) {
     }
 }
 
-module.exports = {
-    userMiddleware: userMiddleware
-}
+module.exports = userMiddleware
